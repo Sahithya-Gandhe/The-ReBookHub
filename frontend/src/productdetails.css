@@ -1,0 +1,110 @@
+/* .product-details-container {
+    padding: 20px;
+    background-color: #fffef5;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px #ccc;
+    width: 60%;
+    margin: 30px auto;
+  } */
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #F9F7F1; /* Light beige */
+    color: #100e0e;
+  }
+  .product-details-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .product-details-container h1 {
+    font-size: 28px;
+    color: #2D2D2D;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .product-details-container p {
+    font-size: 18px;
+    margin: 10px 0;
+    line-height: 1.5;
+  }
+  
+  .product-details-container strong {
+    color: #0a0909;
+  }
+  .name{
+    color:#100e0e
+  }
+  .condition{
+    color:#100e0e
+  }
+  .price{
+    color:#100e0e
+  }
+  .id{
+    color:#100e0e
+  }
+  
+  .chat-button {
+  background-color: #000000; /* black background */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 50px; /* makes it pill-shaped */
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.chat-button:hover {
+  background-color: #222222;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.shop-button {
+  background-color: #ffffff; /* white background */
+  color: #000000; /* black text */
+  border: 2px solid #000000; 
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.shop-button:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+  
+  @media (max-width: 600px) {
+    .product-details-container {
+      margin: 20px 10px;
+      padding: 15px;
+    }
+  
+    .product-details-container h1 {
+      font-size: 22px;
+    }
+  
+    .product-details-container p {
+      font-size: 16px;
+    }
+  
+    .logo-container .logo {
+      height: 40px;
+    }
+  }
