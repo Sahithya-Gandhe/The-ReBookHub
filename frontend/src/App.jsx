@@ -3,7 +3,6 @@ import "./App.css";
 import { supabase } from "../supabaseClient";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-// import HomePage from "./home";
 import Sell from "./sell";
 import ShopPage from "./shop";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -12,9 +11,6 @@ import About from './About';
 import ProductDetails from "./ProductDetails";
 import ChatBox from "./chatbox";
 import { UserContext } from "./contextprovider";
-
-// import { ChatProvider } from './chatContext';
-
 
 function App() {
   const [session, setSession] = useState(null);
@@ -49,45 +45,38 @@ function App() {
   if (!session) {
     return (
       <>
-        <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        {/* <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />; */}
-      </Routes>
-    </Router>
-    <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
+        <Router basename="/">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </Router>
+        <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
       </>
     );
   } else {
     return (
       <UserContext.Provider value={email}>
-        {/* <ChatProvider> */}
-      <div>
-        <h2 className="welcome-text">Welcome, {session?.user?.email}</h2>
+        <div>
+          <h2 className="welcome-text">Welcome, {session?.user?.email}</h2>
           <h3 className="textdisplay">Give your used stationery a second story — and help someone start theirs.</h3>
-        {/* <ShopPage /> */}
-        <Router>
-      <Routes>
-        <Route path="/chatbox" element={<ChatBox />} />
-        <Route path="/" element={<ShopPage />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        
-        {/* <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />; */}
-      </Routes>
-    </Router>
-         <div className="center-container">
-      <button className="aboutus-btn" onClick={signOut}>
-        Sign out
-      </button>
-      <footer className="shop-footer">
-        <p>© 2025 The Re-Book Hub. All rights reserved.</p>
-      </footer>
-    </div>
-
-      </div>
-      {/* </ChatProvider> */}
+          <Router basename="/">
+            <Routes>
+              <Route path="/chatbox" element={<ChatBox />} />
+              <Route path="/" element={<ShopPage />} />
+              <Route path="/sell" element={<Sell />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+            </Routes>
+          </Router>
+          <div className="center-container">
+            <button className="aboutus-btn" onClick={signOut}>
+              Sign out
+            </button>
+            <footer className="shop-footer">
+              <p>© 2025 The Re-Book Hub. All rights reserved.</p>
+            </footer>
+          </div>
+        </div>
       </UserContext.Provider>
     );
   }
