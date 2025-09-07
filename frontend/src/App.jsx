@@ -73,7 +73,6 @@ function App() {
         <Route path="/" element={<ShopPage />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/" element={<ProductDetails />} />
         
         {/* <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />; */}
       </Routes>

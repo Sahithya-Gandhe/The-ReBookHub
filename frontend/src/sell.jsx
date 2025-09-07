@@ -13,70 +13,105 @@ function SellPage() {
   const [products, setProducts] = useState([]);
 //state to keep track of the images 
 const[productImage,setProductImage] = useState(null);
+const [user, setUser] = useState(null);
 
+
+useEffect(() => {
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setUser(session?.user || null);
+    
+    if (!session?.user) {
+      alert("You must be logged in to upload products");
+    }
+  };
+  
+  checkUser();
+}, []);
 
 // upload url function 
-// const uploadImage = async (file) => {
-//   const filePath = `$({file.name})`;
-//   const { error } = await supabase.storage
-//   .from("product-images")
-//   .upload(filePath,file);
-//   if(error){
-//     console.log("error uploading the image",error.message);
-//     return;
-//   }
-//   else{
-//    const{data} = await supabase.storage.from("product-images").getPublicUrl(filePath);
-//    return data.publicUrl;
-//   }
-// }
-
-// const , setTaskImage] = useState(null); // no type needed
-
 const uploadImage = async (file) => {
-  const filePath = `${Date.now()}-${file.name}`;// removed Date.now()
+  try {
+    // Check if user is authenticated
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      throw new Error("User not authenticated");
+    }
 
-  const { error } = await supabase.storage
-    .from("product-images")
-    .upload(filePath, file, {
-      contentType: file.type,
-      upsert: true, // overwrite if needed
-    });
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+    const filePath = `${fileName}`; // Simplified path
 
-  if (error) {
-    console.error("Error uploading image:", error.message);
+    console.log("Uploading file:", file.name, "Path:", filePath);
+
+    // First, let's check if the bucket exists and we can access it
+    const { data: listData, error: listError } = await supabase.storage
+      .from('product-images')
+      .list('', { limit: 1 });
+      
+    if (listError) {
+      console.error('Bucket access error:', listError);
+      throw listError;
+    }
+
+    const { data, error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, file, {
+        upsert: true,
+        contentType: file.type
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw uploadError;
+    }
+
+    console.log("Upload successful:", data);
+
+    // Get public URL - new API in Supabase v2
+    const { data: urlData } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath);
+
+    console.log("Public URL:", urlData.publicUrl);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    alert(`Upload failed: ${error.message || 'Unknown error'}`);
     return null;
   }
-
-  // const { data } = await supabase.storage
-  //   .from("product-images")
-  //   .getPublicUrl(filePath);
-
-  // return data?.publicUrl || null;
-  const {
-    data: { publicUrl },
-  } = await supabase.storage.from("product-images").getPublicUrl(filePath);
-
-  return publicUrl || null;
 };
-
 
 // to insert the data into the Supabase database
   const handleSubmit = async (e) => {
       e.preventDefault();
+      
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        alert("You must be logged in to upload products");
+        return;
+      }
+
 //image urls part 
     let imageUrl = null;
     if(productImage){
       imageUrl = await uploadImage(productImage);
+      if (!imageUrl) {
+        // Don't proceed if image upload failed
+        return;
+      }
     }
-      const {error} = await supabase.from("products").insert({...newProducts, image_url: imageUrl,email: Email}).single();
+      const {error} = await supabase.from("products").insert({...newProducts, image_url: imageUrl,email: Email});
       if(error){
-        alert(error.message);
+        console.error("Database insert error:", error);
+        alert("Error: " + error.message);
       }
       else{
         alert("Product Listed Successfully");
         // setNewProducts({productName:"",Institution:"",condition:"",price:""});
         setNewProducts({productName:"",Institution:"",condition:"",price:""});
+        setProductImage(null); // Reset image state
       }
   }
 // to fetch the data from the supabase database
@@ -105,6 +140,7 @@ console.log(products);
 const handleFileChange = (e) => {
   if(e.target.files && e.target.files.length > 0){
     setProductImage(e.target.files[0]);
+    console.log("Selected file:", e.target.files[0]);
   }
 };
 
