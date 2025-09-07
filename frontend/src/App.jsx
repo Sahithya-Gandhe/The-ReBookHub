@@ -16,6 +16,16 @@ function App() {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
+    // Handle OAuth redirect
+    const handleOAuthRedirect = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session) {
+        setSession(data.session);
+      }
+    };
+
+    handleOAuthRedirect();
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -37,8 +47,14 @@ function App() {
   };
 
   const signUp = async () => {
+    // Determine the redirect URL based on environment
+    const redirectUrl = window.location.origin;
+    
     await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: redirectUrl
+      }
     });
   };
 
@@ -51,7 +67,19 @@ function App() {
             <Route path="/about" element={<About />} />
           </Routes>
         </Router>
-        <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
+        <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px' }}>
+          <Auth 
+            supabaseClient={supabase} 
+            appearance={{ theme: ThemeSupa }} 
+            providers={['google']}
+            redirectTo={window.location.origin}
+          />
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <button onClick={signUp} style={{ padding: '10px 20px', backgroundColor: '#4285f4', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              Sign in with Google
+            </button>
+          </div>
+        </div>
       </>
     );
   } else {
